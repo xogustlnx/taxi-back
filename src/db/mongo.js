@@ -42,9 +42,10 @@ const chatRoomSchema = new mongoose.Schema({
   _id: Number,
   chats: [
     {
-      author: String,
-      text: String,
-      time: Date,
+      author: { type: String, required: true },
+      text: { type: String, required: true },
+      time: { type: Date, required: true },
+      chatType: String,
     },
   ],
 });

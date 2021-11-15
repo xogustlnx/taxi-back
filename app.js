@@ -40,8 +40,10 @@ app.use("/rooms", require("./src/route/rooms"));
 app.use("/chats", require("./src/route/chats"));
 app.use("/static", require("./src/route/static"));
 
-const serverHttp = http.createServer(app).listen(security.nodePort, () => {
+const serverHttp = app.listen(security.nodePort, () => {
   console.log(`Express 서버가 ${security.nodePort}번 포트에서 시작됨.`);
 });
 
-startSocketServer(serverHttp);
+startSocketServer(serverHttp, session);
+
+module.exports = { session }
