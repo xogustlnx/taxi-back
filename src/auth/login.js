@@ -1,4 +1,5 @@
 const getLoginInfo = (req) => {
+  console.log(req.session);
   if (req.session.loginInfo) {
     const { id, sid, name, time } = req.session.loginInfo;
     const timeFlow = Date.now() - time;

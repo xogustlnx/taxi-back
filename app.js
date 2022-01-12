@@ -24,10 +24,12 @@ app.use(bodyParser.json());
 app.use(cors({ origin: true, credentials: true }));
 
 // 세션 및 쿠키
+const sessionFileStore = require('session-file-store')(expressSession);
 const session = expressSession({
-  secret: security.session,
-  resave: true,
-  saveUninitialized: true,
+  secret: security.session, resave: false,
+  saveUninitialized: false,
+  //store: new sessionFileStore({ logFn: function(){}, useAsync: true }),
+  cookie: { httpOnly: true, maxAge: 5300000, /* secure: true, sameSite: 'none' (https 때 만 작동) */ }
 });
 app.use(session);
 app.use(cookieParser());
@@ -44,4 +46,4 @@ const serverHttp = http.createServer(app).listen(security.nodePort, () => {
   console.log(`Express 서버가 ${security.nodePort}번 포트에서 시작됨.`);
 });
 
-startSocketServer(serverHttp);
+startSocketServer(serverHttp, session);

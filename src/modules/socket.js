@@ -1,30 +1,25 @@
 const { Server } = require("socket.io");
+const ios = require("express-socket.io-session");
 const { chatRoomModel } = require("../db/mongo");
 const jwt = require('jsonwebtoken');
+const login = require('../auth/login');
 
 // server: express server
 // session: session middleware
-const startSocketServer = (server) => {
+const startSocketServer = (server, session) => {
   // FIXME: front server hard coded
-  const io = new Server(server, {
-    cors: {
-      origin: ["http://localhost:3000"],
-      methods: ["GET", "POST"]
-    }
-  });
+  const io = new Server(server, { cors: { origin: "*" } });
+
+  io.use(ios(session, { autoSave: true }));
 
   io.on('connection', (socket) => {
     console.log("a user connected!");
 
-    // if session id not given, disconnect
-    const token = socket.handshake.auth.token;
-    console.log("token: " + token)
-    if (!token || token.length === 0) {
-      socket.disconnect();
-      return;
-    }
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const session = socket.handshake.session;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(session);
+    //console.log(login.getLoginInfo({ session: session }));
 
     // roomId 를 인자로 받아, 해당 방에 참가시킨다.
     // ~님이 채팅방에 참여했습니다. 메시지 출력/기록
