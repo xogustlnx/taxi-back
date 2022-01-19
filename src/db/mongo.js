@@ -35,7 +35,7 @@ const chatRoomSchema = Schema({
   _id: Number,
   chats: [
     {
-      author: String,
+      author: String, // = userSchema.id
       text: String,
       time: Date,
     },

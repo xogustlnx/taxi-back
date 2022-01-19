@@ -1,32 +1,29 @@
 const express = require("express");
-const { chatRoomModel } = require("../db/mongo");
-const chunkArray = require("../modules/chunkArray");
+const { chatRoomModel, roomModel } = require("../db/mongo");
+const login = require("../auth/login");
 
+const chunkArray = require("../modules/chunkArray");
 const router = express.Router();
 
-const validateRoomId = (roomId) => {
-  if (isNaN(roomId)) {
-    return false;
-  }
-  const id = Number(roomId);
-  if (!Number.isInteger(id)) {
-    return false;
-  }
-  if (id <= 0) return false;
-  return true;
-}
-
 router.get('/:roomId', async (req, res) => {
+  const roomId = req.params.roomId;
+  const userInfo = login.getLoginInfo(req);
+  /*chatRoomModel.findOne({ _id: roomId }, (err, result) => {
+    if(err){ res.status(400).send("wrong room id"); return; }
+    if(!result){ res.status(400).send("wrong room id"); return; }
+  });*/
   try {
-    if (!validateRoomId(req.params.roomId)) {
-      return res.status(400).send("wrong room id");
-    }
-    const room = await chatRoomModel.findOne({ "_id": req.params.roomId });
+    const room = await chatRoomModel.findOne({ "_id": roomId });
     const chats = room?.chats;
     if (!room) {
+      const rooms = await chatRoomModel.find({});
+      console.log(rooms);
       return res.status(404).send("ID not exist");
     }
-    // if (room.isSecret && !authenticate(req.query.token)) res.status(401).send("Invalid token");
+    
+    // 채팅창에 존재하는 인원인지 확인
+    console.log(room)
+
     if (!chats || chats.length === 0) return res.send({
       data: [],
       page: 0,
