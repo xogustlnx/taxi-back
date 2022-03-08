@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/:roomId', async (req, res) => {
   const roomId = req.params.roomId || '';
 
-  roomModel.findOne({ "_id": roomId }, "name part time", async (err, room) => {
+  roomModel.findOne({ "_id": roomId }, "name part time from to", async (err, room) => {
     if(err) return res.status(404).send(err);
     if(!room) return res.status(404).send("roomId not exist");
 
